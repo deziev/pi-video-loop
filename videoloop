@@ -1,0 +1,47 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides: omxplayer
+# Required-Start:
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Displays video file in a loop using omxplayer
+# Description:
+### END INIT INFO
+
+# Video (replace with the path and file name of your video)
+video_path=/opt/vids/video.mp4
+video_path2=/opt/vids/video2.mp4
+
+#---- There should be no need to edit anything below this line ----
+
+# Start displaying the video loop
+case "$1" in start)
+screen -dmS videoloop sh -c "(echo omxplayer --display=7 -o local $video_path -b --loop --no-osd; echo omxplayer --display=2 -o local $video_path2 -b --loop --no-osd) | parallel"
+
+echo "Video Playback Started"
+;;
+
+# Stop displaying video loop
+stop)
+sudo killall omxplayer.bin
+echo "Video Playback Stopped"
+;;
+
+# Restart video loop if it died
+repair)
+if !(ps -a | grep omx -q)
+    then
+    screen -dmS videoloop sh -c "(echo omxplayer --display=7 -o local $video_path -b --loop --no-osd; echo omxplayer --display=2 -o local $video_path2 -b --loop --no-osd) | parallel"
+    echo "The Video is now running"
+fi
+;;
+
+*)
+
+echo "Usage: /etc/init.d/videoloop {start|stop|repair}"
+
+exit 1
+
+;;
+esac

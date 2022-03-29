@@ -1,0 +1,7 @@
+/dist
+/node_modules
+/config/local*
+/runtime
+/vscode
+.DS_Store
+/local
