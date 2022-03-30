@@ -24,21 +24,21 @@ async function main() {
     // debug: true
   });
 
-  const savedDataEtagList = (await videoMetaDataRepo.getData()).map(it => it.etag);
+  const savedDataKeyList = (await videoMetaDataRepo.getData()).map(it => it.key);
   const list = (await s3.GetList()).Contents
     .filter(it => it.Key.match(/video(1|2)/))
-    .filter(it => !savedDataEtagList.includes(it.ETag))
+    .filter(it => !savedDataKeyList.includes(it.Key))
     .map(createBucketMetaDataRecord);
 
   if (!list.length) {
-    logger.warn(`New records not found`);
-    logger.warn(`Aborting`);
+    logger.info(`New records not found`);
+    logger.info(`Aborting`);
     process.exit(0);
   }
 
   if (list.length !== 2) {
-    logger.warn(`Found only one new record: ${JSON.stringify(list, null, 2)}`);
-    logger.warn(`Aborting`);
+    logger.info(`Found only one new record: ${JSON.stringify(list, null, 2)}`);
+    logger.info(`Aborting`);
     process.exit(0);
   }
 
