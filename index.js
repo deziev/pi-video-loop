@@ -4,8 +4,10 @@ const config = require('config');
 const {
   ConsoleLogger,
   BucketDataRepositoryFactory,
-  createBucketMetaDataRecord
+  createBucketMetaDataRecord,
+  runLinuxCommand
 } = require('./src/index');
+const { writeFileSync } = require('fs');
 
 
 async function main() {
@@ -39,23 +41,40 @@ async function main() {
     logger.warn(`Aborting`);
     process.exit(0);
   }
-  const filesToDownload = list.map(it => it.key);
+
   const downloadDir = config.get('destFileDir');
+  const filesToDownload = list.map((it, index) => ({
+    originalName: it.key,
+    path: path.resolve(downloadDir, `video${index + 1}${path.parse(it.key).ext}`)
+  }));
   const downloads = filesToDownload
-    .map((fileName, index) => {
-      const destFilePath = path.resolve(downloadDir, `video${index + 1}${path.parse(fileName).ext}`);
-      return s3.Download(
-        fileName,
-        destFilePath
-      )
-    });
-  logger.info(`Start downloading files [${filesToDownload.join(', ')}]`);
+    .map(file => s3.Download(file.originalName, file.path));
+
+  logger.info(`Start downloading files [${filesToDownload.map(it => it.originalName).join(', ')}]`);
   await Promise.all(downloads);
   logger.info(`Done downloading into ${downloadDir}`);
 
+  writeFileSync(
+    config.get('videoPathsFile'),
+    `
+    export video_path=${filesToDownload[0].path}
+    export video_path2=${filesToDownload[1].path}
+
+    `
+  );
+
+  await runLinuxCommand(`chmod +x ${config.get('videoPathsFile')}`);
+
+  // Restart videoloop
+  const videoloopProcess = config.get('videoloopProcess');
+  if (videoloopProcess) {
+    await runLinuxCommand(`${videoloopProcess} stop`);
+    await runLinuxCommand(`${videoloopProcess} start`);
+  }
+
   await videoMetaDataRepo.saveRecords(list);
   logger.info(list);
-  // reboot videoloop
+  logger.info('Done!');
 }
 
 main();

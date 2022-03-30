@@ -9,9 +9,17 @@
 # Description:
 ### END INIT INFO
 
-# Video (replace with the path and file name of your video)
-video_path=/opt/vids/video.mp4
-video_path2=/opt/vids/video2.mp4
+if [ -f /var/pivideoloop/paths.sh ]; then
+    source /var/pivideoloop/paths.sh
+fi
+
+if [ -z "$video_path" ]; then
+    video_path=/opt/vids/video.mp4
+fi
+
+if [ -z "$video_path2" ]; then
+    video_path2=/opt/vids/video2.mp4
+fi
 
 #---- There should be no need to edit anything below this line ----
 
