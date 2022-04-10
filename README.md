@@ -1,9 +1,24 @@
 # Raspberry pi Video loop
 
 ### Usage
-Prepare SD card with Raspberry Pi Imager. Select `Raspberry Pi OS (Legacy)` OS. Set username as `pi-video` and password. Select your default wifi network and enable SSH connection.
+Prepare SD card with Raspberry Pi Imager. Select `Raspberry Pi OS Lite (Legacy)` OS. Set username as `pi-video` and password. Select your default wifi network and enable SSH connection.
 
-Prepare directory `/opt/vids/` to use as video storage.
+Prepare directory `/var/pivideoloop/` to use as video storage.
+```
+sudo mkdir /var/pivideoloop
+sudo chown pi-video /var/pivideoloop
+sudo mkdir /var/pivideoloop/vids
+```
+Create `/var/pivideoloop/env.sh` file to store secret env variables
+```
+touch /var/pivideoloop/env.sh
+```
+
+After environment preparation you could run the node.js script
+```
+cd /var/pivideoloop/pi-video-loop
+bin/environment node index.js
+```
 
 Optionally run:
 ```
@@ -66,4 +81,17 @@ If you experience poor playback, you may need to increase the GPU memory allocat
 sudo raspi-config
 ```
 
-`Advanced Options -> Memory Split -> 256`
+`Performance Options -> GPU Memory -> 256`
+
+#### Step 7: Install Node.js
+
+Download and install LTS arm7 node
+```
+wget https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-armv7l.tar.xz
+sudo tar xvf node-v16.14.2-linux-armv7l.tar.xz -C /opt
+cd /opt
+sudo mv -v node-v16.14.2-linux-armv7l.tar.xz node
+sudo ln -s /opt/node/bin/node /usr/bin/node
+sudo ln -s /opt/node/bin/npm /usr/bin/npm
+sudo reboot
+```

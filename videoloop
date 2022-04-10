@@ -26,7 +26,8 @@ fi
 # Start displaying the video loop
 case "$1" in start)
 screen -dmS videoloop sh -c "(echo omxplayer --display=7 -o local $video_path -b --loop --no-osd; echo omxplayer --display=2 -o local $video_path2 -b --loop --no-osd) | parallel"
-
+# screen -dmS videoloop sh -c "omxplayer --display=7 -o local $video_path -b --loop --no-osd"
+# screen -dmS videoloop sh -c "omxplayer --display=2 -o local $video_path2 -b --loop --no-osd"
 echo "Video Playback Started"
 ;;
 
@@ -41,6 +42,8 @@ repair)
 if !(ps -a | grep omx -q)
     then
     screen -dmS videoloop sh -c "(echo omxplayer --display=7 -o local $video_path -b --loop --no-osd; echo omxplayer --display=2 -o local $video_path2 -b --loop --no-osd) | parallel"
+    # screen -dmS videoloop sh -c "omxplayer --display=7 -o local $video_path -b --loop --no-osd"
+    # screen -dmS videoloop sh -c "omxplayer --display=2 -o local $video_path2 -b --loop --no-osd"
     echo "The Video is now running"
 fi
 ;;
