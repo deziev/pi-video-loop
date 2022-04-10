@@ -90,7 +90,7 @@ Download and install LTS arm7 node
 wget https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-armv7l.tar.xz
 sudo tar xvf node-v16.14.2-linux-armv7l.tar.xz -C /opt
 cd /opt
-sudo mv -v node-v16.14.2-linux-armv7l.tar.xz node
+sudo mv -v node-v16.14.2-linux-armv7l node
 sudo ln -s /opt/node/bin/node /usr/bin/node
 sudo ln -s /opt/node/bin/npm /usr/bin/npm
 sudo reboot
